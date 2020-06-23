@@ -21,12 +21,10 @@ executors:
         environment:
           MYSQL_DATABASE: wordpress
           MYSQL_ROOT_PASSWORD: password
-        command: [--name db, --network wp-network]
       - image: wordpress:5.4.2-php7.3-apache
         environment:
           WORDPRESS_DB_PASSWORD: password
           WORDPRESS_DB_HOST: db
-        command: [--name wp-container, --network wp-network]
 #      - image: cypress/browsers:node12.13.0-chrome78-ff70
 #        environment:
 #          TERM: xterm
