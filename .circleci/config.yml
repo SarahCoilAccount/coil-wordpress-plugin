@@ -16,7 +16,16 @@ executors:
       - image: cypress/browsers:node12.13.0-chrome78-ff70
         environment:
           TERM: xterm
-      - image: circleci/php:7.3.19-fpm-node
+      - image: circleci/mysql:8.0.16
+        environment:
+          MYSQL_DATABASE: wordpress
+          MYSQL_ROOT_PASSWORD: password
+          name: wordpressdb
+      - image: wordpress:5.4.2-php7.3-apache
+        environment:
+          WORDPRESS_DB_PASSWORD: password
+          link: wordpressdb:mysql
+          name: wordpress
 
 references:
   workspace_root: &workspace_root
@@ -31,17 +40,17 @@ references:
       - DEFAULT_COMPOSER_FLAGS: "--no-interaction --no-progress --no-suggest --prefer-dist"
     executor: cypress-and-wordpress
     working_directory: *workspace_root
-
+ s
   # Environment set-up.
   configure_environment: &configure_environment
     run:
       # xdebug is slow; hirak/prestissimo enables parallel Composer downloads.
       name: "Configure System"
       command: |
-        sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-        echo 'memory_limit=4096M' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
-        echo 'error_log=/home/circleci/php.log' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
-        composer global require $DEFAULT_COMPOSER_FLAGS hirak/prestissimo
+        #sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+        #echo 'memory_limit=4096M' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
+        #echo 'error_log=/home/circleci/php.log' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
+        #composer global require $DEFAULT_COMPOSER_FLAGS hirak/prestissimo
 
 jobs:
   build:
