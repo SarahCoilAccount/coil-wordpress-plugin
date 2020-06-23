@@ -4,28 +4,27 @@ workflows:
   build_test:
     jobs:
       - build
+      - test
 
-      - test_phpcs:
-          requires:
-            - build
+#      - test_phpcs:
+#          requires:
+#            - build
 
 # This defines a reusable executor.
 executors:
   cypress-and-wordpress:
     docker:
-      - image: cypress/browsers:node12.13.0-chrome78-ff70
+      - image: circleci/php:7.3.19-node
+      - image: wordpress:5.4.2-php7.3-apache
         environment:
-          TERM: xterm
+          WORDPRESS_DB_PASSWORD: password
       - image: circleci/mysql:8.0.16
         environment:
           MYSQL_DATABASE: wordpress
           MYSQL_ROOT_PASSWORD: password
-          name: wordpressdb
-      - image: wordpress:5.4.2-php7.3-apache
-        environment:
-          WORDPRESS_DB_PASSWORD: password
-          link: wordpressdb:mysql
-          name: wordpress
+#      - image: cypress/browsers:node12.13.0-chrome78-ff70
+#        environment:
+#          TERM: xterm
 
 references:
   workspace_root: &workspace_root
@@ -47,10 +46,10 @@ references:
       # xdebug is slow; hirak/prestissimo enables parallel Composer downloads.
       name: "Configure System"
       command: |
-        #sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-        #echo 'memory_limit=4096M' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
-        #echo 'error_log=/home/circleci/php.log' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
-        #composer global require $DEFAULT_COMPOSER_FLAGS hirak/prestissimo
+        sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+        echo 'memory_limit=4096M' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
+        echo 'error_log=/home/circleci/php.log' | sudo tee -a /usr/local/etc/php/conf.d/circleci.ini
+        composer global require $DEFAULT_COMPOSER_FLAGS hirak/prestissimo
 
 jobs:
   build:
@@ -75,3 +74,14 @@ jobs:
       - run:
           name: "Run PHP Code Sniffer Checks"
           command: cd project && composer run phpcs
+
+  test:
+    <<: *default_config
+    steps:
+      - *configure_environment
+      - *attach_workspace
+      - run:
+          name: "Set up network"
+          command: |
+            set -x
+            docker network create wp-network
