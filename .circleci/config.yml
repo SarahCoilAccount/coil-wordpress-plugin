@@ -10,6 +10,10 @@ workflows:
 
 # This defines a reusable executor.
 executors:
+  php-only:
+    docker:
+      - image: circleci/php:7.3.19-node
+
   cypress-and-wordpress:
     docker:
       - image: circleci/php:7.3.19-node
@@ -35,7 +39,6 @@ references:
   default_config: &default_config
     environment:
       - DEFAULT_COMPOSER_FLAGS: "--no-interaction --no-progress --no-suggest --prefer-dist"
-    executor: cypress-and-wordpress
     working_directory: *workspace_root
 
   # Environment set-up.
@@ -52,6 +55,7 @@ references:
 jobs:
   build:
     <<: *default_config
+    executor: php-only
     steps:
       - checkout:
           path: project
@@ -67,6 +71,7 @@ jobs:
 
   test:
     <<: *default_config
+    executor: cypress-and-wordpress
     steps:
       - *configure_environment
       - setup_remote_docker
