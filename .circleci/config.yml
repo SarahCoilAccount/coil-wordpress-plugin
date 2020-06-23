@@ -30,7 +30,6 @@ references:
     environment:
       - DEFAULT_COMPOSER_FLAGS: "--no-interaction --no-progress --no-suggest --prefer-dist"
     executor: cypress-and-wordpress
-    browser: chrome
     working_directory: *workspace_root
 
   # Environment set-up.
