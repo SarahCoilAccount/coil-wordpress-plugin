@@ -14,21 +14,6 @@ executors:
     docker:
       - image: circleci/php:7.3.19-node
 
-  cypress-and-wordpress:
-    docker:
-      - image: circleci/php:7.3.19-node
-      - image: circleci/mysql:8.0.16
-        environment:
-          MYSQL_DATABASE: wordpress
-          MYSQL_ROOT_PASSWORD: password
-      - image: wordpress:5.4.2-php7.3-apache
-        environment:
-          WORDPRESS_DB_PASSWORD: password
-          WORDPRESS_DB_HOST: db
-#      - image: cypress/browsers:node12.13.0-chrome78-ff70
-#        environment:
-#          TERM: xterm
-
 references:
   workspace_root: &workspace_root
     /home/circleci/project
@@ -72,7 +57,7 @@ jobs:
 
   test:
     <<: *default_config
-    executor: cypress-and-wordpress
+    executor: php-only
     steps:
       - *configure_environment
       - setup_remote_docker
@@ -82,3 +67,39 @@ jobs:
           command: |
             set -x
             docker network create wp-network
+
+      - run:
+          name: "Set up database"
+          command: |
+            docker run -d \
+              -e MYSQL_ROOT_PASSWORD=password \
+              -e MYSQL_DATABASE=wordpress \
+              --name db \
+              --network wp-network \
+              circleci/mysql:8.0.16
+
+      - run:
+          name: "Setup WordPress"
+          command: |
+            docker run -d \
+              -e WORDPRESS_DB_HOST=db:3306 \
+              -e WORDPRESS_DB_USER=root \
+              -e WORDPRESS_DB_PASSWORD=password \
+              -e WORDPRESS_DB_NAME=wordpress \
+              -e WORDPRESS_CONFIG_EXTRA="define('WP_SITEURL', 'http://' . \$_SERVER['HTTP_HOST']); define('WP_HOME', 'http://' . \$_SERVER['HTTP_HOST']);" \
+              --name wp-container \
+              --network wp-network \
+              wordpress:5.4.2-php7.3
+
+      - run:
+          name: Install WordPress
+          command: |
+            docker run -it --rm \
+              --volumes-from wp-container \
+              --network wp-network \
+              wordpress:cli core install \
+                --url=localhost \
+                --title=test \
+                --admin_user=admin \
+                --admin_password=admin \
+                --admin_email=foo@bar.com
