@@ -29,7 +29,7 @@ references:
   default_config: &default_config
     environment:
       - DEFAULT_COMPOSER_FLAGS: "--no-interaction --no-progress --no-suggest --prefer-dist"
-    executor: php-docker
+    executor: cypress-and-wordpress
     browser: chrome
     working_directory: *workspace_root
 
