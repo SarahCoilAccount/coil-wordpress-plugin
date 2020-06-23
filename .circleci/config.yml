@@ -17,13 +17,13 @@ executors:
   cypress-and-wordpress:
     docker:
       - image: circleci/php:7.3.19-node
-      - image: wordpress:5.4.2-php7.3-apache
-        environment:
-          WORDPRESS_DB_PASSWORD: password
       - image: circleci/mysql:8.0.16
         environment:
           MYSQL_DATABASE: wordpress
           MYSQL_ROOT_PASSWORD: password
+      - image: wordpress:5.4.2-php7.3-apache
+        environment:
+          WORDPRESS_DB_PASSWORD: password
 #      - image: cypress/browsers:node12.13.0-chrome78-ff70
 #        environment:
 #          TERM: xterm
