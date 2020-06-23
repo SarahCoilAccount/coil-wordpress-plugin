@@ -13,7 +13,7 @@ workflows:
 executors:
   cypress-and-wordpress:
     docker:
-      - image: cypress/browsers-chrome78-ff70
+      - image: cypress/browsers:node12.13.0-chrome78-ff70
         environment:
           TERM: xterm
       - image: circleci/php:7.3.19-fpm-node
