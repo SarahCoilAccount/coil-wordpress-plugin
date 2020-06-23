@@ -56,28 +56,20 @@ jobs:
       - checkout:
           path: project
       - *configure_environment
+      - setup_remote_docker
       - run:
           name: "Install Project Dependencies"
           command: cd project && composer install $DEFAULT_COMPOSER_FLAGS && npm install
-      - setup_remote_docker
       - persist_to_workspace:
           root: *workspace_root
           paths:
             - project
 
-  test_phpcs:
-    <<: *default_config
-    steps:
-      - *configure_environment
-      - *attach_workspace
-      - run:
-          name: "Run PHP Code Sniffer Checks"
-          command: cd project && composer run phpcs
-
   test:
     <<: *default_config
     steps:
       - *configure_environment
+      - setup_remote_docker
       - *attach_workspace
       - run:
           name: "Set up network"
