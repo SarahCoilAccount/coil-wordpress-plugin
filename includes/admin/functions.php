@@ -117,7 +117,7 @@ function render_coil_metabox() : void {
  */
 function maybe_save_post_metabox( int $post_id ) : void {
 
-	if ( ! current_user_can( 'edit_post', $post_id ) || empty( $_REQUEST['coil_metabox_nonce'] ) ) {
+	if ( ! current_user_can( 'edit_posts', $post_id ) || empty( $_REQUEST['coil_metabox_nonce'] ) ) {
 		return;
 	}
 
@@ -146,7 +146,7 @@ function maybe_save_post_metabox( int $post_id ) : void {
  */
 function maybe_save_term_meta( int $term_id ) : void {
 
-	if ( ! current_user_can( 'edit_post', $term_id ) || empty( $_REQUEST['term_gating_nonce'] ) ) {
+	if ( ! current_user_can( 'edit_posts', $term_id ) || empty( $_REQUEST['term_gating_nonce'] ) ) {
 		return;
 	}
 
