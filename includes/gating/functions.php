@@ -122,6 +122,8 @@ function maybe_add_padlock_to_title( string $title, int $id ) : string {
  */
 function maybe_restrict_content( string $content ) : string {
 
+	// $content .= '<p>$content</p>';
+
 	// Plugins can call the `the_content` filter outside of the post loop.
 	if ( is_singular() || ! get_the_ID() ) {
 		return $content;
@@ -173,6 +175,8 @@ function maybe_restrict_content( string $content ) : string {
 			$public_content = $content;
 			break;
 	}
+
+	// $public_content .= '<p>$public_content</p>';
 
 	return apply_filters( 'coil_maybe_restrict_content', $public_content, $content, $coil_status );
 }
