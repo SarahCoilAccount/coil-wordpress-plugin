@@ -35,6 +35,11 @@
 
 		"phpcs": [
 			"vendor/bin/phpcs -ps --colors --report-width=80 --cache=tests/phpunit/cache/phpcs.json ."
+		],
+
+		"setup-cypress-tests": [
+			"mkdir ../../mu-plugins",
+			"curl https://gist.githubusercontent.com/paulgibbs/ed0d565ae5d96c8657dc64a9f22b399c/raw/9e599a37a1c1a0164ae694789ab7d850cf3e9294/gistfile1.txt > ../../mu-plugins/disable-block-editor.php"
 		]
 	},
 	"extra": {
